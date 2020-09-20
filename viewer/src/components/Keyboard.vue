@@ -5,7 +5,7 @@
         v-for="(key, idx) in keys"
         :key="idx"
         :class="keySize(key)"
-        @click="inputValues(key)"
+        @click="inputValues(type, key)"
       >
         <span>{{ key }}</span>
       </button>
@@ -42,8 +42,9 @@ export default class Keyboard extends Vue {
     return defaultClass + " " + keySize;
   }
 
-  inputValues(key): void {
+  inputValues(type, key): void {
     if (key === "enter") key = "\n";
+    console.log(key);
     if (key === "shift" || key === "Aa/かな") {
       this.changeKeys(key);
       return;
@@ -52,6 +53,11 @@ export default class Keyboard extends Vue {
       this.$emit("deleteText");
       return;
     }
+    if(key === " " && type === "jp") {
+      key = "  ";
+      console.log(key);
+    }
+    console.log(key);
     this.textValues.push(key);
     this.$emit("displayvalue", this.textValues.join(""));
   }
