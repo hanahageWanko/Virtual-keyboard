@@ -1,12 +1,23 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <Keyboard :keyarray="boardKey" />
+    <textarea
+      :value="displayValue"
+      cols="30"
+      rows="10"
+      class="textarea"
+    ></textarea>
+    <Keyboard
+      :keyarray="boardKey"
+      :type="type"
+      @displayvalue="inputDisplayValue"
+      @changeKeys="chengeKeyArray"
+      @deleteText="deleteValues"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import Keyboard from "@/components/Keyboard.vue";
 
 @Component({
@@ -16,46 +27,122 @@ import Keyboard from "@/components/Keyboard.vue";
 })
 export default class App extends Vue {
   name!: "App";
+
   // data
-  boardKey :{
-    "Lowercase": string[][]
-    "Uppercase": string[][];
-    "Jp": string[][];
-    "space": string[][];
+  displayValue = "";
+  boardKey: {
+    lowercase: string[][];
+    uppercase: string[][];
+    jp: string[][];
+    space: string[][];
   } = {
-      "Lowercase":[
-        ["1","2","3","4","5","6","7","8","9","0","-","^","×"],
-        ["q","w","e","r","t","y","u","i","o","p","@","["],
-        ["a","s","d","f","g","h","j","k","l",";",":","]","Enter"],
-        ["shift", "z","x","c","v","b","n","m",",",".","?"]
+    lowercase: [
+      ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "^", "×"],
+      ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "@", "["],
+      ["a", "s", "d", "f", "g", "h", "j", "k", "l", ";", ":", "]", "enter"],
+      ["shift", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?"]
+    ],
+    uppercase: [
+      ["!", '"', "#", "$", "%", "&", "'", "(", ")", "", "=", "~", "×"],
+      ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "p", "["],
+      ["A", "S", "D", "F", "G", "H", "J", "K", "L", "+", "*", ":", "", "enter"],
+      ["shift", "Z", "X", "C", "V", "B", "N", "M", "<", ">", "→", "←", ""]
+    ],
+    jp: [
+      [
+        "ぬ",
+        "ふ",
+        "あ",
+        "う",
+        "え",
+        "お",
+        "や",
+        "ゆ",
+        "よ",
+        "わ",
+        "ほ",
+        "へ",
+        "×"
       ],
-      "Uppercase":[
-        ["!","\"","#","$","%","&","\'","(",")","","=","~","×"],
-        ["Q","W","E","R","T","Y","U","I","O","P","p","["],
-        ["A","S","D","F","G","H","J","K","L","+","*",":","","Enter"],
-        ["shift", "Z","X","C","V","B","N","M","<",">","→","←",""], 
+      ["た", "て", "い", "す", "か", "ん", "な", "に", "ら", "せ", "", ""],
+      [
+        "ち",
+        "と",
+        "し",
+        "は",
+        "き",
+        "く",
+        "ま",
+        "の",
+        "り",
+        "れ",
+        "け",
+        "む",
+        "enter"
       ],
-      "Jp":[
-        ["ぬ","ふ","あ","う","え","お","や","ゆ","よ","わ","ほ","へ","×"],
-        ["た","て","い","す","か","ん","な","に","ら","せ","",""],
-        ["ち","と","し","は","き","く","ま","の","り","れ","け","む","Enter"],
-        ["shift", "つ","さ","そ","ひ","こ","み","も","ね","る","め","ろ",""], 
-      ],
-      "space":[
-        ["Aa/かな",""]
+      [
+        "shift",
+        "つ",
+        "さ",
+        "そ",
+        "ひ",
+        "こ",
+        "み",
+        "も",
+        "ね",
+        "る",
+        "め",
+        "ろ",
+        ""
       ]
-      
+    ],
+    space: [["Aa/かな", " "]]
+  };
+  type = "lowercase";
+
+  inputDisplayValue(value): void {
+    this.displayValue = value;
   }
+
+  chengeKeyArray(key): void {
+    const currentType = this.type;
+    if (key === "Aa/かな") {
+      this.type = currentType === "jp" ? "lowercase" : "jp";
+    }
+    if (key === "shift") {
+      if(this.type === "jp") return;
+      this.type = currentType === "lowercase" ? "uppercase" : "lowercase";
+    }
+  }
+  deleteValues():void {
+    const nextValue:string = this.displayValue.slice(0, this.displayValue.length -1);
+    this.displayValue = nextValue;
+  }
+
 }
 </script>
 
 <style lang="scss">
+@import "./assets/style.css";
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+.textarea {
+  display: block;
+  padding: 10px;
+  width: 100%;
+  font-size: 120%;
 }
 </style>
